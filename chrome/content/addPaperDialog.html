@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Paper</title>
+</head>
+<body>
+    <div>
+        <h2>Select Subcollections</h2>
+        <div id="subcollections">
+        </div>
+        
+        <h2>Select Tags</h2>
+        <div id="tags">
+        </div>
+		
+		<div id="statusMessage" style="color: red; display: none;">Adding item and downloading PDF... Do not close this window.</div>
+        
+        <button id="addButton">Add</button>
+        <button id="cancelButton" onclick="window.close()">Cancel</button>
+    </div>
+
+	<script src="chrome://zotero/content/include.js"></script>
+	<script src="addPaper.js"></script>
+</body>
+</html>

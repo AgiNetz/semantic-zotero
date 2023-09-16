@@ -1,0 +1,25 @@
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+         xmlns:html="http://www.w3.org/1999/xhtml">
+
+    <script src="semanticZotero.js"/>
+	
+	<menupopup id="menu_ToolsPopup">
+		<menuitem id="semantic-zotero-options-menuitem" 
+				  label="Semantic Zotero Options" 
+				  oncommand="window.open('chrome://semanticZotero/content/options.html', '', 'chrome,titlebar,toolbar,centerscreen,width=600,height=200');"/>
+	</menupopup>
+
+
+
+	<popup
+        id="zotero-itemmenu">
+        <menu class="menu-iconic" id="zotero-itemmenu-semantic-menu" label="Semantic Zotero">
+            <menupopup id="zotero-itemmenu-citationcounts-menupopup">
+				<menuitem id="semanticZotero-contextMenuOption" 
+						  label="Show References" 
+						  oncommand="SemanticZotero.showReferences();" 
+				/>
+            </menupopup>
+        </menu>
+    </popup>
+</overlay>

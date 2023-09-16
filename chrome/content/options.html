@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Semantic Zotero Options</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        #buttons {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+	<script src="chrome://zotero/content/include.js"></script>
+	<script src="options.js"></script>
+    <label>
+        Semantic Scholar API Key (Optional):
+        <input type="text" id="apiKey" placeholder="Enter API Key">
+    </label>
+    <label>
+        <input type="checkbox" id="relateItemsCheckbox">
+        Relate items when adding reference to library
+    </label>
+    <div id="buttons">
+        <button onclick="SemanticZoteroOptions.saveOptions()">Save</button>
+        <button onclick="SemanticZoteroOptions.cancel()">Cancel</button>
+    </div>
+</body>
+</html>

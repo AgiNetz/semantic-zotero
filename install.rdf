@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>tomasdanis26@gmail.com</em:id>
+    <em:version>0.2</em:version>
+    <em:type>2</em:type>
+    <em:name>Semantic Zotero</em:name>
+    <em:description>Retrieves references for Zotero items using Semantic Scholar API and lets you add them to your library.</em:description>
+    <em:creator>Tomáš Daniš</em:creator>
+    <em:targetApplication>
+      <Description>
+        <em:id>zotero@chnm.gmu.edu</em:id>
+        <em:minVersion>6.0</em:minVersion>
+        <em:maxVersion>6.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+  </Description>
+</RDF>

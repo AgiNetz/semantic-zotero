@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>References</title>
+	<style>
+		.reference {
+			border-bottom: 1px solid #ddd;
+			width: 100%;
+		}
+
+		.reference summary {
+			cursor: pointer;
+			outline: none;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+		}
+
+		.reference-details {
+			padding: 10px;
+			border-top: 1px solid #ddd;
+		}
+
+		.summary-content {
+			flex-grow: 1; 
+			padding: 5px 0;
+		}
+
+		.reference-title {
+			flex: 0 0 50%;
+		}
+		
+		.reference-first-author {
+			flex: 0 0 15%;
+		}
+		
+		.reference-year { 
+			flex: 0 0 70px;
+		}
+		
+		.reference-pdf {
+			flex: 0 0 50px; 
+		}
+		
+		.citation-count {
+			flex: 0 0 70px; 
+		}
+		
+		.action-box {
+			text-align: right;
+		}
+		
+		.sticky-header {
+			position: sticky;
+			top: 0;
+			background-color: white;
+			z-index: 1000;
+			display: flex; 
+			border-bottom: 1px solid #ccc;
+		}
+
+		.sticky-header > span:nth-child(1) {
+			flex: 0 0 50%;
+		}
+
+		.sticky-header > span:nth-child(2) {
+			flex: 0 0 15%;
+		}
+
+		.sticky-header > span:nth-child(3) {
+			flex: 0 0 70px;
+		}
+
+		.sticky-header > span:nth-child(4) {
+			flex: 0 0 50px;
+		}
+		
+		.sticky-header > span:nth-child(5) {
+			flex: 0 0 70px;
+		}
+
+		.sticky-header > span:nth-child(6) {
+			text-align: right;
+		}
+	</style>
+
+
+</head>
+<body>
+	<div id="header" class="sticky-header">
+		<span>Title</span>
+		<span>First Author</span>
+		<span>Year</span>
+		<span>PDF</span>
+		<span>Citations</span>
+		<span>Action</span>
+	</div>
+    <div id="rootDiv"></div>
+</body>
+</html>

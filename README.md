@@ -16,5 +16,5 @@ In the Zotero Menu bar, choosing Tools -> Semantic Zotero Options allows you to 
 
 ## Installation
 
-1. Download the repository as .zip
+1. Download the .xpi file from one of the releases
 2. In Zotero menu bar, select Tools -> Add-ons -> Settings icon on upper right -> Install add-on from file

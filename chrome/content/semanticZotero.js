@@ -207,7 +207,7 @@ var SemanticZotero = {
 			var pdfUrl = undefined;
 			if(arxivID) {
 				pdfUrl = "https://arxiv.org/pdf/" + arxivID + '.pdf';
-			} else if(reference.isOpenAccess) {
+			} else if(reference.isOpenAccess && reference.openAccessPdf) {
 				pdfUrl = reference.openAccessPdf.url;
 			}
 			if (pdfUrl) {

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE window>
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        id="semanticzotero-add-window"
+        title="Semantic Zotero"
+        width="520" height="480"
+        persist="width height screenX screenY"
+        onload="Zotero.SemanticZotero?.onAddDialogLoad(window)">
+<html:style>
+  #semanticzotero-add { display: flex; flex-direction: column; flex: 1; min-height: 0; margin: 12px; font: -moz-dialog; font-size: 13px; }
+  #semanticzotero-add-reference { font-weight: 600; margin-bottom: 8px; }
+  .lists { display: flex; gap: 12px; flex: 1; min-height: 0; }
+  .lists > div { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .lists h3 { margin: 4px 0; font-size: 13px; }
+  .box { flex: 1; overflow: auto; border: 1px solid #ccc; padding: 4px; }
+  .box .empty { opacity: .7; margin: 2px; }
+  .buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; align-items: center; }
+  #semanticzotero-add-status { flex: 1; }
+</html:style>
+<script src="chrome://zotero/content/include.js"/>
+<html:div id="semanticzotero-add">
+  <html:div id="semanticzotero-add-reference"></html:div>
+  <html:div class="lists">
+    <html:div><html:h3 data-i18n="add.collections">Collections</html:h3><html:div class="box" id="semanticzotero-add-collections"></html:div></html:div>
+    <html:div><html:h3 data-i18n="add.tags">Tags</html:h3><html:div class="box" id="semanticzotero-add-tags"></html:div></html:div>
+  </html:div>
+  <html:div class="buttons">
+    <html:span id="semanticzotero-add-status"></html:span>
+    <html:button id="semanticzotero-add-cancel" data-i18n="add.cancel">Cancel</html:button>
+    <html:button id="semanticzotero-add-button" data-i18n="add.button">Add to Zotero</html:button>
+  </html:div>
+</html:div>
+</window>

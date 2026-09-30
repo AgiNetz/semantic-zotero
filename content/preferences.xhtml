@@ -1,0 +1,29 @@
+<vbox id="semanticzotero-preferences"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      onload="Zotero.SemanticZotero?.onPrefsLoad(window)">
+<html:style>
+  #semanticzotero-preferences .row { display: grid; grid-template-columns: 160px 1fr auto; gap: 6px 10px; align-items: center; max-width: 660px; }
+  #semanticzotero-preferences .row input { width: 100%; box-sizing: border-box; font: inherit; }
+  #semanticzotero-preferences .help { font-size: 11px; color: var(--fill-secondary); margin: 2px 0 8px 0; max-width: 660px; }
+</html:style>
+<groupbox>
+  <label><html:h2 data-i18n="prefs.api">Semantic Scholar</html:h2></label>
+  <html:div class="row">
+    <html:label for="semanticzotero-baseUrl" data-i18n="prefs.baseUrl">API address</html:label>
+    <html:input id="semanticzotero-baseUrl" type="text"/>
+    <html:button id="semanticzotero-baseUrl-reset" data-i18n="prefs.reset">Default</html:button>
+  </html:div>
+  <html:div class="help" id="semanticzotero-baseUrl-help"></html:div>
+  <html:div class="row">
+    <html:label for="semanticzotero-apiKey" data-i18n="prefs.apiKey">API key (optional)</html:label>
+    <html:input id="semanticzotero-apiKey" type="password"/>
+    <html:span></html:span>
+  </html:div>
+  <html:div class="help" data-i18n="prefs.apiKeyHelp"></html:div>
+  <html:div class="help" data-i18n="prefs.privacy"></html:div>
+</groupbox>
+<groupbox>
+  <label><html:h2 data-i18n="prefs.options">Options</html:h2></label>
+  <html:label><html:input id="semanticzotero-relateItems" type="checkbox"/> <html:span data-i18n="prefs.relateItems"></html:span></html:label>
+</groupbox>
+</vbox>

@@ -1,0 +1,18 @@
+{
+  "name": "semantic-zotero",
+  "version": "0.3.0",
+  "description": "Semantic Zotero - references of a paper from Semantic Scholar, added to Zotero with one click",
+  "author": "Tomáš Daniš",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/test.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.6.0"
+  }
+}

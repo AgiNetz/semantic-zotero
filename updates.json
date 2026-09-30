@@ -1,0 +1,13 @@
+{
+  "addons": {
+    "tomasdanis26@gmail.com": {
+      "updates": [
+        {
+          "version": "0.3.0",
+          "update_link": "https://github.com/AgiNetz/semantic-zotero/releases/download/v0.3.0/semantic-zotero-0.3.0.xpi",
+          "applications": { "zotero": { "strict_min_version": "7.0", "strict_max_version": "10.*" } }
+        }
+      ]
+    }
+  }
+}

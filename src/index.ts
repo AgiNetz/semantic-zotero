@@ -3,7 +3,6 @@
  * Entry point; bootstrap.js calls startup()/shutdown().
  */
 import { migrateLegacyPrefs } from './prefs';
-import type { Reference } from './s2/reference';
 import { AddDialogs } from './ui/add-dialog';
 import { addLegacyMenu, registerMenus, removeLegacyMenu, unregisterMenus } from './ui/context-menu';
 import { onPrefsLoad } from './ui/preferences';
@@ -65,10 +64,6 @@ class SemanticZoteroPlugin {
 
   async showReferences(item: any): Promise<void> {
     this.references.show(item);
-  }
-
-  addReference(item: any, reference: Reference): any {
-    return this.addDialogs.show(item, reference);
   }
 
   onReferencesWindowLoad = (win: any): void => this.references.onLoad(win);

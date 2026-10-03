@@ -1,5 +1,5 @@
 /**
- * Logging like ZotSeek: `[SemanticZotero:<module>] [INFO] message`, to the Browser
+ * Logging: `[SemanticZotero:<module>] [INFO] message`, to the Browser
  * Console (Tools → Developer) and to Zotero's debug output (Help → Debug Output
  * Logging). Filter by "[SemanticZotero" to see every module.
  */

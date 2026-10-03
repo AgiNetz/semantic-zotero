@@ -59,7 +59,7 @@ export class AddDialogs {
       });
     };
     checkboxes(doc.getElementById('semanticzotero-add-collections'),
-      collections.map((c: any) => [c.key, c.name] as [string, string]), t('add.noCollections'));
+      collections.map((c: any) => [c.key, collectionPath(c, collections)] as [string, string]), t('add.noCollections'));
     checkboxes(doc.getElementById('semanticzotero-add-tags'), tags.map((x: string) => [x, x] as [string, string]), t('add.noTags'));
     const checked = (id: string) => Array.from(doc.querySelectorAll(`#${id} input:checked`)).map((i: any) => i.value);
     const status = doc.getElementById('semanticzotero-add-status');
@@ -88,6 +88,14 @@ export class AddDialogs {
     for (const w of this.open) if (!w.closed) w.close();
     this.open.clear();
   }
+}
+
+/** "Parent › Child" for subcollections, so collections with the same name can be told apart. */
+export function collectionPath(collection: { name: string; parentID?: number | false }, all: { id: number; name: string; parentID?: number | false }[]): string {
+  const byID = new Map(all.map((c) => [c.id, c]));
+  const names: string[] = [];
+  for (let c: typeof collection | undefined = collection; c; c = c.parentID ? byID.get(c.parentID) : undefined) names.unshift(c.name);
+  return names.join(' › ');
 }
 
 /** Creates the reference as a preprint in the citing item's library, as in 0.2. */

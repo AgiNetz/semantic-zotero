@@ -40,7 +40,7 @@ const EN = {
   'add.adding': 'Adding …',
   'prefs.api': 'Semantic Scholar',
   'prefs.baseUrl': 'API address',
-  'prefs.baseUrlHelp': 'Default: {url}. Behind the institute proxy, enter its address instead; the proxy adds the key.',
+  'prefs.baseUrlHelp': 'Default: {url}. If you access the Semantic Scholar API through a proxy, enter its address here.',
   'prefs.reset': 'Default',
   'prefs.apiKey': 'API key (optional)',
   'prefs.apiKeyHelp': 'A personal key from semanticscholar.org avoids the shared quota. It is stored in plain text in the Zotero profile.',
@@ -86,7 +86,7 @@ const DE: Record<Key, string> = {
   'add.adding': 'Wird hinzugefügt …',
   'prefs.api': 'Semantic Scholar',
   'prefs.baseUrl': 'API-Adresse',
-  'prefs.baseUrlHelp': 'Standard: {url}. Hinter dem Instituts-Proxy dessen Adresse eintragen; der Proxy hängt den Key an.',
+  'prefs.baseUrlHelp': 'Standard: {url}. Bei Zugriff auf die Semantic-Scholar-API über einen Proxy hier dessen Adresse eintragen.',
   'prefs.reset': 'Standard',
   'prefs.apiKey': 'API-Key (optional)',
   'prefs.apiKeyHelp': 'Ein persönlicher Key von semanticscholar.org umgeht das gemeinsame Kontingent. Er steht im Klartext im Zotero-Profil.',
@@ -95,14 +95,7 @@ const DE: Record<Key, string> = {
   'prefs.privacy': 'Datenschutz: Titel, DOI, arXiv-ID und URL des ausgewählten Eintrags gehen an Semantic Scholar (Allen Institute for AI, USA) bzw. an den oben eingetragenen Proxy.',
 };
 
-let forced: 'en' | 'de' | null = null;
-
-export function setLocale(locale: 'en' | 'de' | null): void {
-  forced = locale;
-}
-
 export function currentLocale(): 'en' | 'de' {
-  if (forced) return forced;
   let pref = '';
   let zotero = '';
   try {

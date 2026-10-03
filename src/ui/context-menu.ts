@@ -62,10 +62,6 @@ export function unregisterMenus(): void {
   showReferences = null;
 }
 
-export function usesMenuManager(): boolean {
-  return menuRegistration !== false;
-}
-
 /** Zotero 7: the same entry, added to the item context menu of a main window. */
 export function addLegacyMenu(win: any, icon: string): void {
   if (menuRegistration) return;

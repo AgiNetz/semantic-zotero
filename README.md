@@ -6,35 +6,30 @@ Semantic Zotero integrates Zotero with Semantic Scholar to fetch and display ref
 
 ## Usage
 
-### Show References:
+### Show references
 
-To fetch references for a given paper, right click on it, select "Semantic Zotero" and then "Show references"
-![show-ref](https://github.com/AgiNetz/semantic-zotero/assets/29703385/bb52135d-fa33-4f5f-b3c5-5c674b103d24)
+To fetch references for a given paper, right click on it and select "Show references (Semantic Scholar) …". Expand a reference to see its authors, abstract and citation contexts, and click "Add" to add it to your library (with the PDF if one is available), choosing collections and tags.
 
 ### Configure options
 
-In the Zotero Menu bar, choosing Tools -> Semantic Zotero Options allows you to configure options such as custom Semantic Scholar API key
+In Zotero → Settings → Semantic Zotero you can set:
+
+- a personal Semantic Scholar API key (optional, but without one Semantic Scholar often rejects requests due to the shared rate limit)
+- the API address, if you access the Semantic Scholar API through a proxy
+- whether added references are marked as related to the citing item
 
 ## Installation
 
+Requires Zotero 7–10.
+
 1. Download the .xpi file from one of the releases
-2. In Zotero menu bar, select Tools -> Add-ons -> Settings icon on upper right -> Install add-on from file
+2. In Zotero, select Tools → Plugins → gear icon in the upper right → Install Plugin From File…
 
 ## Development
 
-Requires Zotero 7–10. Everything builds and runs in Docker:
+Everything builds and runs in Docker:
 
 - `./build.sh` – unit tests, typecheck, build, `dist/semantic-zotero-<version>.xpi`
 - `./e2e/run.sh` – end-to-end tests in real Zotero 7.0.32 and 10.0.3 (headless, Xvfb) against a mock Semantic Scholar API
 
-Settings (Zotero → Settings → Semantic Zotero): API address (Semantic Scholar or a proxy), optional API key, relate items.
-
-## Development
-
-Requires Zotero 7–10. Everything builds and runs in Docker:
-
-- `./build.sh` – unit tests, typecheck, build, `dist/semantic-zotero-<version>.xpi`
-- `./e2e/run.sh` – end-to-end tests in real Zotero 7.0.32 and 10.0.3 (headless, Xvfb) against a mock Semantic Scholar API
-
-Settings (Zotero → Settings → Semantic Zotero): API address (Semantic Scholar or a proxy), optional API key, relate items.
-
+Without Docker, Node 22 and `zip` are enough: `npm ci && npm test && npm run build -- --pack`.

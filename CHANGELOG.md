@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0 (30.09.2026)
+## 0.3.0 (03.10.2026)
 
 - Rebuilt for Zotero 7–10 (bootstrap plugin, `manifest.json`).
 - Context menu via MenuManager (Zotero 8+) or DOM (Zotero 7); only for a single regular item.

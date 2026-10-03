@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE window>
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        id="semanticzotero-references-window"
+        title="Semantic Zotero"
+        width="1000" height="700"
+        persist="width height screenX screenY"
+        onload="Zotero.SemanticZotero?.onReferencesWindowLoad(window)">
+<html:style>
+  #semanticzotero-refs { display: flex; flex-direction: column; flex: 1; min-height: 0; margin: 10px; font: -moz-dialog; font-size: 13px; }
+  #semanticzotero-refs-status { margin-bottom: 8px; }
+  #semanticzotero-refs-status.error { color: #c62828; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 180px 50px 50px 70px 130px; gap: 8px; align-items: center; }
+  .head { font-weight: 600; padding: 4px 8px 4px 22px; border-bottom: 1px solid #ccc; }
+  #semanticzotero-refs-list { flex: 1; overflow: auto; }
+  details.reference { border-bottom: 1px solid #e4e4e4; }
+  details.reference > summary { display: grid; grid-template-columns: 14px minmax(0, 1fr) 180px 50px 50px 70px 130px; gap: 8px; align-items: center; padding: 5px 8px 5px 0; cursor: pointer; list-style: none; }
+  details.reference > summary::before { content: "▸"; text-align: center; }
+  details.reference[open] > summary::before { content: "▾"; }
+  details.reference.unavailable > summary { opacity: .5; }
+  .cell.title { font-weight: 500; }
+  .cell.author, .cell.title { overflow: hidden; text-overflow: ellipsis; }
+  .cell.year, .cell.pdf, .cell.citations { text-align: center; }
+  .details { padding: 4px 12px 10px 22px; user-select: text; }
+  .details h4 { margin: 8px 0 2px; }
+  .details p, .details ul { margin: 2px 0; }
+</html:style>
+<script src="chrome://zotero/content/include.js"/>
+<html:div id="semanticzotero-refs">
+  <html:div id="semanticzotero-refs-status"></html:div>
+  <html:div class="grid head">
+    <html:div data-i18n="refs.colTitle">Title</html:div>
+    <html:div data-i18n="refs.colAuthor">First author</html:div>
+    <html:div data-i18n="refs.colYear">Year</html:div>
+    <html:div data-i18n="refs.colPdf">PDF</html:div>
+    <html:div data-i18n="refs.colCitations">Citations</html:div>
+    <html:div data-i18n="refs.colAction">Action</html:div>
+  </html:div>
+  <html:div id="semanticzotero-refs-list"></html:div>
+</html:div>
+</window>

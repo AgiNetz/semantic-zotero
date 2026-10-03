@@ -20,7 +20,7 @@ function main(): any {
   return Zotero.getMainWindow();
 }
 
-async function mockRequests(): Promise<{ path: string; key: string; proxy: boolean }[]> {
+async function mockRequests(): Promise<{ path: string; key: string; proxy: boolean; bridge: boolean; authorization: string; zoteroKey: string }[]> {
   return (await main().fetch(`${MOCK}/__requests`)).json();
 }
 
@@ -61,13 +61,28 @@ async function contextMenuEntry(): Promise<{ visible: boolean; entry: any }> {
 /** Clicks the context menu entry for the selected item and waits for the references window to finish. */
 async function openReferences(item: any, state = 'ready'): Promise<any> {
   await select(item);
-  const doc = main().document;
-  const popup = doc.getElementById('zotero-itemmenu');
-  const shown = nextEvent(popup, 'popupshown');
-  openItemMenu(popup);
-  await shown;
-  const entry = await waitFor('context menu entry', () => findEntry(popup), 5000);
-  popup.activateItem(entry);
+  const popup = main().document.getElementById('zotero-itemmenu');
+  // Zotero 10 occasionally closes the menu again while it is being built: retry
+  for (let attempt = 0; ; attempt++) {
+    if (popup.state !== 'closed') {
+      popup.hidePopup();
+      await delay(100);
+    }
+    const shown = nextEvent(popup, 'popupshown');
+    openItemMenu(popup);
+    const ok = await shown.then(() => true, () => false);
+    if (!ok) {
+      if (attempt === 2) throw new Error('context menu does not open');
+      continue;
+    }
+    const entry = await waitFor('context menu entry', () => findEntry(popup), 5000);
+    if (popup.state === 'open') {
+      popup.activateItem(entry);
+      break;
+    }
+    if (attempt === 2) throw new Error('context menu closes before the entry can be activated');
+    await delay(200);
+  }
   const win = await waitFor('references window', () => plugin().references.get(item.id));
   await waitFor(`references window state ${state}`, () => {
     const s = win.document?.documentElement?.dataset.state;
@@ -78,6 +93,7 @@ async function openReferences(item: any, state = 'ready'): Promise<any> {
 
 /** Opens the item context menu like a right click (Zotero 8+ adds plugin entries in buildItemContextMenu). */
 function openItemMenu(popup: any): void {
+  if (popup.state !== 'closed') popup.hidePopup();
   const pane = main().ZoteroPane;
   if (pane.onItemsContextMenuOpen) void pane.onItemsContextMenuOpen({ target: null }, 200, 200);
   else popup.openPopupAtScreen(200, 200, true);
@@ -269,6 +285,112 @@ export const scenarios: Scenario[] = [
     assert(relate.checked, 'relateItems');
     prefsWin.close();
     setPref('baseUrl', DIRECT);
+  }],
+
+  ['busy Semantic Scholar: waits for Retry-After and retries', async () => {
+    await resetMock();
+    const item = await newItem({ title: 'Busy Paper', DOI: '10.1000/busy' });
+    await select(item);
+    const texts = new Set<string>();
+    const opening = openReferences(item);
+    const win = await waitFor('window', () => plugin().references.get(item.id));
+    while (win.document?.documentElement?.dataset.state !== 'ready' && !win.closed) {
+      texts.add(status(win));
+      await delay(50);
+    }
+    await opening;
+    assert([...texts].some((x) => x.includes('ausgelastet')), `no waiting message: ${[...texts].join(' | ')}`);
+    assert(rows(win).length === 3, 'rows after retry');
+    assert((await mockRequests()).length === 2, 'one retry');
+    closeAll();
+  }],
+
+  ['bridge with Zotero key: member, non-member, no key, unreachable', async (ctx) => {
+    await resetMock();
+    setPref('connection', 'bridge');
+    setPref('bridgeUrl', `${MOCK}/bridge/graph/v1/`);
+    setPref('bridgeAuth', 'zotero');
+    setPref('zoteroKey', 'memberkey0123456789');
+    setPref('apiKey', 'personal-s2-key');
+    try {
+      const win = await openReferences(ctx.paper);
+      assert(rows(win).length === 3, 'rows via bridge');
+      closeAll();
+      const [req] = await mockRequests();
+      assert(req.bridge && req.zoteroKey === 'memberkey0123456789', JSON.stringify(req));
+      assert(req.key === '' && req.authorization === '', 'personal key or other credentials sent to the bridge');
+
+      setPref('zoteroKey', 'otherkey0123456789');
+      let w = await openReferences(ctx.paper, 'error');
+      assert(status(w).includes('verweigert den Zugriff (not a member'), status(w));
+      closeAll();
+      setPref('zoteroKey', '');
+      w = await openReferences(ctx.paper, 'error');
+      assert(status(w).includes('Nicht an der Bridge angemeldet'), status(w));
+      closeAll();
+      setPref('zoteroKey', 'memberkey0123456789');
+      setPref('bridgeUrl', 'http://127.0.0.1:9/graph/v1');
+      w = await openReferences(ctx.paper, 'error');
+      assert(status(w).includes('Bridge ist nicht erreichbar'), status(w));
+    } finally {
+      closeAll();
+      setPref('connection', 'direct');
+      setPref('apiKey', '');
+    }
+  }],
+
+  ['bridge with OIDC: login in the settings, token refresh, logout', async (ctx) => {
+    await resetMock();
+    await main().fetch(`${MOCK}/__oidc?lifetime=31`); // valid for ~1 s (30 s safety margin)
+    setPref('connection', 'bridge');
+    setPref('bridgeUrl', `${MOCK}/bridge/graph/v1`);
+    setPref('bridgeAuth', 'oidc');
+    setPref('oidcIssuer', `${MOCK}/oidc/realms/test`);
+    setPref('oidcClientId', 'semantic-zotero');
+    const env = (plugin().oidc as any).env;
+    const launch = env.launch;
+    // The "browser": follows the provider's redirect to Zotero's local server like a real browser would.
+    env.launch = (url: string) => void main().fetch(url).catch((e: any) => Zotero.debug(`[SemanticZotero E2E] launch: ${e}`));
+    let prefsWin: any = null;
+    try {
+      let w = await openReferences(ctx.paper, 'error');
+      assert(status(w).includes('Nicht an der Bridge angemeldet'), status(w));
+      closeAll();
+
+      // Callback without a pending login is refused
+      const stray = await main().fetch(`http://127.0.0.1:${Zotero.Server.port}/semanticzotero/callback?code=x&state=nope`);
+      assert(stray.status === 400, `stray callback: ${stray.status}`);
+
+      await Zotero.Utilities.Internal.openPreferences(plugin().paneID);
+      prefsWin = await waitFor('prefs window', () => Services.wm.getMostRecentWindow('zotero:pref'));
+      const doc = await waitFor('login button', () => prefsWin.document.getElementById('semanticzotero-login') && prefsWin.document, 20000);
+      assert(!doc.getElementById('semanticzotero-section-bridge').hidden && !doc.getElementById('semanticzotero-section-oidc').hidden
+        && doc.getElementById('semanticzotero-section-zotero').hidden && doc.getElementById('semanticzotero-section-direct').hidden, 'sections');
+      doc.getElementById('semanticzotero-login').click();
+      await waitFor('logged in', () => doc.getElementById('semanticzotero-login-status').textContent === 'Angemeldet als erika.' || Promise.reject(new Error(doc.getElementById('semanticzotero-login-status').textContent)), 10000);
+      await screenshot(ctx, 'prefs-oidc', prefsWin);
+
+      w = await openReferences(ctx.paper);
+      assert(rows(w).length === 3, 'rows via bridge with OIDC');
+      closeAll();
+      const req = (await mockRequests()).find((r) => r.bridge && r.authorization);
+      assert(req?.authorization.startsWith('Bearer '), 'bearer token');
+      await delay(1300);
+      w = await openReferences(ctx.paper);
+      closeAll();
+      const stats = await (await main().fetch(`${MOCK}/__oidc/stats`)).json();
+      assert(stats.code === 1 && stats.refresh >= 1, JSON.stringify(stats));
+
+      doc.getElementById('semanticzotero-logout').click();
+      assert(doc.getElementById('semanticzotero-login-status').textContent === 'Nicht angemeldet.', 'logout status');
+      w = await openReferences(ctx.paper, 'error');
+      assert(status(w).includes('Nicht an der Bridge angemeldet'), status(w));
+    } finally {
+      closeAll();
+      prefsWin?.close();
+      env.launch = launch;
+      setPref('connection', 'direct');
+    }
   }],
 
   ['disable removes the menu, enable restores it', async (ctx) => {

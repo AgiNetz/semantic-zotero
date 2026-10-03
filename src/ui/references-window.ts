@@ -6,7 +6,9 @@
  */
 import { t } from '../i18n';
 import { readPrefs } from '../prefs';
-import { ApiError, loadReferences } from '../s2/client';
+import { NotLoggedIn, type OidcSession } from '../auth/oidc';
+import { ApiError, loadReferences, NetworkError } from '../s2/client';
+import { apiConfig } from '../s2/connection';
 import { itemFields } from '../s2/ids';
 import { authorList, firstAuthor, pdfUrl, type Reference } from '../s2/reference';
 import { getFetch } from '../util/env';
@@ -18,6 +20,20 @@ const log = logger('references');
 
 export interface ReferencesBackend {
   addReference(item: any, reference: Reference): void;
+  oidc: OidcSession;
+}
+
+/** User-facing text for a failed request. */
+export function errorText(e: any, bridge: boolean): string {
+  if (e instanceof NotLoggedIn || e?.name === 'NotLoggedIn') return t('err.notLoggedIn');
+  if (e instanceof NetworkError) return t(bridge ? 'err.bridgeUnreachable' : 'err.unreachable');
+  if (e instanceof ApiError) {
+    if (e.status === 404) return t('err.notFound');
+    if (e.status === 429 || e.status === 503) return t(bridge ? 'err.busyBridge' : 'err.busy');
+    if (e.status === 401) return bridge ? t('err.bridgeUnauthorized', { message: e.serverMessage }) : t('err.forbidden');
+    if (e.status === 403) return bridge ? t('err.bridgeForbidden', { message: e.serverMessage }) : t('err.forbidden');
+  }
+  return t('err.other', { message: e?.message || String(e) });
 }
 
 export class ReferencesWindows {
@@ -62,8 +78,14 @@ export class ReferencesWindows {
     for (const h of Array.from(doc.querySelectorAll('[data-i18n]')) as any[]) h.textContent = t(h.dataset.i18n);
     root.dataset.state = 'loading';
     status.textContent = t('refs.loading');
+    let bridge = false;
     try {
-      const refs = await log.time(`references of ${item.key}`, () => loadReferences(readPrefs(), fields, getFetch()), (r) => `${r?.length ?? 'not found'}`);
+      const prefs = readPrefs();
+      bridge = prefs.connection === 'bridge';
+      const cfg = apiConfig(prefs, this.backend.oidc, getFetch(), (sec) => {
+        if (!win.closed) status.textContent = t(bridge ? 'refs.waitBridge' : 'refs.wait', { s: sec });
+      });
+      const refs = await log.time(`references of ${item.key}`, () => loadReferences(cfg, fields), (r) => `${r?.length ?? 'not found'}`);
       if (win.closed) return;
       if (refs === null) throw new ApiError(404, '');
       const known = await libraryTitles(item.libraryID);
@@ -73,12 +95,11 @@ export class ReferencesWindows {
       root.dataset.state = 'ready';
     } catch (e: any) {
       if (win.closed) return;
-      status.textContent = e instanceof ApiError && e.status === 404 ? t('err.notFound')
-        : e instanceof ApiError && e.status === 403 ? t('err.forbidden')
-          : t('err.other', { message: e?.message || String(e) });
+      status.textContent = errorText(e, bridge);
       status.classList.add('error');
       root.dataset.state = 'error';
-      if (!(e instanceof ApiError)) logError(e);
+      if (!(e instanceof ApiError || e instanceof NetworkError || e instanceof NotLoggedIn)) logError(e);
+      else log.warn(`references of ${item.key}: ${e.message}`);
     }
   }
 

@@ -16,6 +16,7 @@ In Zotero → Settings → Semantic Zotero you can set:
 
 - a personal Semantic Scholar API key (optional, but without one Semantic Scholar often rejects requests due to the shared rate limit)
 - the API address, if you access the Semantic Scholar API through a proxy
+- alternatively, a Semantic Scholar Bridge: a server that shares one API key with a group. You log in with your institution account (OIDC, in the browser) or with a Zotero API key of a member of the bridge's Zotero group
 - whether added references are marked as related to the citing item
 
 ## Installation
@@ -30,6 +31,6 @@ Requires Zotero 7–10.
 Everything builds and runs in Docker:
 
 - `./build.sh` – unit tests, typecheck, build, `dist/semantic-zotero-<version>.xpi`
-- `./e2e/run.sh` – end-to-end tests in real Zotero 7.0.32 and 10.0.3 (headless, Xvfb) against a mock Semantic Scholar API
+- `./e2e/run.sh` – end-to-end tests in real Zotero 7.0.32 and 10.0.3 (headless, Xvfb) against a mock Semantic Scholar API, bridge and OIDC provider
 
 Without Docker, Node 22 and `zip` are enough: `npm ci && npm test && npm run build -- --pack`.

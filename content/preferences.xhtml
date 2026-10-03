@@ -2,24 +2,73 @@
       xmlns:html="http://www.w3.org/1999/xhtml"
       onload="Zotero.SemanticZotero?.onPrefsLoad(window)">
 <html:style>
-  #semanticzotero-preferences .row { display: grid; grid-template-columns: 160px 1fr auto; gap: 6px 10px; align-items: center; max-width: 660px; }
-  #semanticzotero-preferences .row input { width: 100%; box-sizing: border-box; font: inherit; }
+  #semanticzotero-preferences .row { display: grid; grid-template-columns: 170px 1fr auto; gap: 6px 10px; align-items: center; max-width: 660px; margin: 4px 0; }
+  #semanticzotero-preferences .row input, #semanticzotero-preferences .row select { width: 100%; box-sizing: border-box; font: inherit; }
   #semanticzotero-preferences .help { font-size: 11px; color: var(--fill-secondary); margin: 2px 0 8px 0; max-width: 660px; }
+  #semanticzotero-preferences .choice { display: block; margin: 3px 0; }
+  #semanticzotero-preferences .section { margin: 6px 0 4px 22px; }
+  #semanticzotero-preferences .buttons { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
 </html:style>
 <groupbox>
-  <label><html:h2 data-i18n="prefs.api">Semantic Scholar</html:h2></label>
-  <html:div class="row">
-    <html:label for="semanticzotero-baseUrl" data-i18n="prefs.baseUrl">API address</html:label>
-    <html:input id="semanticzotero-baseUrl" type="text"/>
-    <html:button id="semanticzotero-baseUrl-reset" data-i18n="prefs.reset">Default</html:button>
+  <label><html:h2 data-i18n="prefs.connection">Connection</html:h2></label>
+  <html:label class="choice"><html:input type="radio" name="semanticzotero-connection" id="semanticzotero-connection-direct" value="direct"/> <html:span data-i18n="prefs.direct"></html:span></html:label>
+  <html:div class="section" id="semanticzotero-section-direct">
+    <html:div class="row">
+      <html:label for="semanticzotero-baseUrl" data-i18n="prefs.baseUrl">API address</html:label>
+      <html:input id="semanticzotero-baseUrl" type="text"/>
+      <html:button id="semanticzotero-baseUrl-reset" data-i18n="prefs.reset">Default</html:button>
+    </html:div>
+    <html:div class="help" id="semanticzotero-baseUrl-help"></html:div>
+    <html:div class="row">
+      <html:label for="semanticzotero-apiKey" data-i18n="prefs.apiKey">API key (optional)</html:label>
+      <html:input id="semanticzotero-apiKey" type="password"/>
+      <html:span></html:span>
+    </html:div>
+    <html:div class="help" data-i18n="prefs.apiKeyHelp"></html:div>
   </html:div>
-  <html:div class="help" id="semanticzotero-baseUrl-help"></html:div>
-  <html:div class="row">
-    <html:label for="semanticzotero-apiKey" data-i18n="prefs.apiKey">API key (optional)</html:label>
-    <html:input id="semanticzotero-apiKey" type="password"/>
-    <html:span></html:span>
+
+  <html:label class="choice"><html:input type="radio" name="semanticzotero-connection" id="semanticzotero-connection-bridge" value="bridge"/> <html:span data-i18n="prefs.bridge"></html:span></html:label>
+  <html:div class="section" id="semanticzotero-section-bridge">
+    <html:div class="row">
+      <html:label for="semanticzotero-bridgeUrl" data-i18n="prefs.bridgeUrl">Bridge address</html:label>
+      <html:input id="semanticzotero-bridgeUrl" type="text" placeholder="https://bridge.example.org/graph/v1"/>
+      <html:span></html:span>
+    </html:div>
+    <html:div class="help" data-i18n="prefs.bridgeUrlHelp"></html:div>
+    <html:div class="row">
+      <html:label for="semanticzotero-bridgeAuth" data-i18n="prefs.bridgeAuth">Log in with</html:label>
+      <html:select id="semanticzotero-bridgeAuth">
+        <html:option value="oidc" data-i18n="prefs.authOidc">OIDC</html:option>
+        <html:option value="zotero" data-i18n="prefs.authZotero">Zotero key</html:option>
+      </html:select>
+      <html:span></html:span>
+    </html:div>
+    <html:div id="semanticzotero-section-oidc">
+      <html:div class="row">
+        <html:label for="semanticzotero-oidcIssuer" data-i18n="prefs.oidcIssuer">Login server</html:label>
+        <html:input id="semanticzotero-oidcIssuer" type="text" placeholder="https://keycloak.example.org/realms/example"/>
+        <html:span></html:span>
+      </html:div>
+      <html:div class="row">
+        <html:label for="semanticzotero-oidcClientId" data-i18n="prefs.oidcClientId">Client ID</html:label>
+        <html:input id="semanticzotero-oidcClientId" type="text"/>
+        <html:span></html:span>
+      </html:div>
+      <html:div class="buttons">
+        <html:button id="semanticzotero-login" data-i18n="prefs.login">Log in …</html:button>
+        <html:button id="semanticzotero-logout" data-i18n="prefs.logout">Log out</html:button>
+        <html:span id="semanticzotero-login-status"></html:span>
+      </html:div>
+    </html:div>
+    <html:div id="semanticzotero-section-zotero">
+      <html:div class="row">
+        <html:label for="semanticzotero-zoteroKey" data-i18n="prefs.zoteroKey">Zotero key</html:label>
+        <html:input id="semanticzotero-zoteroKey" type="password"/>
+        <html:span></html:span>
+      </html:div>
+      <html:div class="help" data-i18n="prefs.zoteroKeyHelp"></html:div>
+    </html:div>
   </html:div>
-  <html:div class="help" data-i18n="prefs.apiKeyHelp"></html:div>
   <html:div class="help" data-i18n="prefs.privacy"></html:div>
 </groupbox>
 <groupbox>

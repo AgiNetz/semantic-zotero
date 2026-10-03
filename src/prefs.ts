@@ -2,10 +2,22 @@
 
 export const DEFAULT_BASE_URL = 'https://api.semanticscholar.org/graph/v1';
 
+export type Connection = 'direct' | 'bridge';
+export type BridgeAuth = 'oidc' | 'zotero';
+
 export interface SemanticZoteroPrefs {
-  /** Graph API base without trailing slash: Semantic Scholar directly or a proxy. */
+  /** direct: Semantic Scholar with an optional personal key; bridge: a Semantic Scholar Bridge. */
+  connection: Connection;
+  /** Graph API base without trailing slash (direct). */
   baseUrl: string;
   apiKey: string;
+  /** Graph API base of the bridge, e.g. https://bridge.example.org/graph/v1. */
+  bridgeUrl: string;
+  bridgeAuth: BridgeAuth;
+  /** Zotero API key for bridges that check Zotero group membership. */
+  zoteroKey: string;
+  oidcIssuer: string;
+  oidcClientId: string;
   relateItems: boolean;
 }
 
@@ -20,16 +32,32 @@ export function setPref(key: string, value: string | number | boolean): void {
   Zotero.Prefs.set(PREFIX + key, value);
 }
 
+export function clearPref(key: string): void {
+  try {
+    Zotero.Prefs.clear(PREFIX + key);
+  } catch {
+    // not set
+  }
+}
+
 function str(key: string, fallback = ''): string {
   const v = getPref(key);
   return typeof v === 'string' ? v.trim() : fallback;
 }
 
+const trimSlash = (u: string) => u.replace(/\/+$/, '');
+
 export function readPrefs(): SemanticZoteroPrefs {
   const v = getPref('relateItems');
   return {
-    baseUrl: (str('baseUrl') || DEFAULT_BASE_URL).replace(/\/+$/, ''),
+    connection: str('connection') === 'bridge' ? 'bridge' : 'direct',
+    baseUrl: trimSlash(str('baseUrl') || DEFAULT_BASE_URL),
     apiKey: str('apiKey'),
+    bridgeUrl: trimSlash(str('bridgeUrl')),
+    bridgeAuth: str('bridgeAuth') === 'zotero' ? 'zotero' : 'oidc',
+    zoteroKey: str('zoteroKey'),
+    oidcIssuer: trimSlash(str('oidcIssuer')),
+    oidcClientId: str('oidcClientId'),
     relateItems: typeof v === 'boolean' ? v : true,
   };
 }
